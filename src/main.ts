@@ -7,32 +7,48 @@ import * as fs from "fs";
 
 const TOOL = "aws-copilot";
 
-export async function install(version: string, osPlat: string) {
-  const toolPath = tc.find(TOOL, version) || (await download(version, osPlat));
+export async function install(version: string, osPlat: string, osArch: string) {
+  const toolPath =
+    tc.find(TOOL, version) || (await download(version, osPlat, osArch));
 
   addPath(toolPath);
 }
 
-export function downloadUrl(version: string, osPlat: string): string {
+export function downloadUrl(
+  version: string,
+  osPlat: string,
+  osArch: string
+): string {
   return `https://github.com/aws/copilot-cli/releases/download/${version}/${fileName(
     version,
-    osPlat
+    osPlat,
+    osArch
   )}`;
 }
 
-async function download(version: string, osPlat: string): Promise<string> {
-  const url = downloadUrl(version, osPlat);
+async function download(
+  version: string,
+  osPlat: string,
+  osArch: string
+): Promise<string> {
+  const url = downloadUrl(version, osPlat, osArch);
   info(`Downloading  ${url}`);
   const downloadPath = await tc.downloadTool(url);
   fs.chmodSync(downloadPath, "777");
   return await tc.cacheFile(downloadPath, "copilot", TOOL, version);
 }
 
-export function fileName(version: string, osPlat: string): string {
+export function fileName(
+  version: string,
+  osPlat: string,
+  osArch: string
+): string {
   const platform = osPlat === "win32" ? "windows" : osPlat;
   const ext = osPlat === "win32" ? ".exe" : "";
+  const arch =
+    osPlat === "win32" ? "" : osArch === "arm64" ? `-${osArch}` : "-amd64";
 
-  return `copilot-${platform}-${version}${ext}`;
+  return `copilot-${platform}${arch}-${version}${ext}`;
 }
 
 async function run() {
@@ -42,7 +58,7 @@ async function run() {
       throw new Error("Failed to resolve latest version");
     }
 
-    await install(version, os.platform());
+    await install(version, os.platform(), os.arch());
   } catch (error) {
     setFailed(error.message);
   }

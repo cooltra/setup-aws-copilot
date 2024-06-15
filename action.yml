@@ -1,7 +1,7 @@
 # https://help.github.com/en/articles/metadata-syntax-for-github-actions
 name: 'Setup AWS Copilot'
 description: 'A GitHub Action for setting up and configuring the AWS Copilot command line interface'
-author: 'softprops'
+author: 'cooltra'
 env:
   'FASTLY_API_TOKEN': 'Fastly API token'
 runs:
