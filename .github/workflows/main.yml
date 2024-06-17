@@ -32,3 +32,12 @@ jobs:
         uses: ./ # Uses an action in the root directory
       - name: Demo
         run: copilot --help
+  integration-arm:
+    runs-on: public-arm-2-cores
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup AWS Copilot
+        uses: ./ # Uses an action in the root directory
+      - name: Demo
+        run: copilot --help
